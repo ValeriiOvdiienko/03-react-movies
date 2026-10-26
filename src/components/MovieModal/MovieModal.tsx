@@ -7,14 +7,19 @@ interface MovieModalProps {
   onClose: () => void;
   movie: Movie;
 }
+
 export default function MovieModal({ onClose, movie }: MovieModalProps) {
   const handleBackdropClick = (event: React.MouseEvent<HTMLDivElement>) => {
     if (event.target === event.currentTarget) {
       onClose();
     }
   };
+
   useEffect(() => {
-    document.body.classList.add("no-scroll");
+    const originalOverflow = document.body.style.overflow;
+
+    document.body.style.overflow = "hidden";
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         onClose();
@@ -24,10 +29,11 @@ export default function MovieModal({ onClose, movie }: MovieModalProps) {
     document.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      document.body.classList.remove("no-scroll");
+      document.body.style.overflow = originalOverflow;
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [onClose]);
+
   return createPortal(
     <div
       className={css.backdrop}
